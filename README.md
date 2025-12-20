@@ -5,7 +5,7 @@ By Thomas Segal & Vincet Perez
   <img src="https://upload.wikimedia.org/wikipedia/en/thumb/5/59/New_York_City_Department_of_Sanitation_logo.svg/2560px-New_York_City_Department_of_Sanitation_logo.svg.png" alt="DSNY Logo" width="200">
 </p>
 
-## 1. Project Overview
+## Project Overview
 
 This project forecasts recycling performance for NYC community districts using time series analysis. An interactive Streamlit application automatically selects the best forecasting model (Baseline, ARIMA, or SARIMA) for each district based on RMSE, helping DSNY predict monthly recycling proportions one month in advance.
 
@@ -17,7 +17,7 @@ This project forecasts recycling performance for NYC community districts using t
 
 ---
 
-## 2. Business Objectives
+## Business Objectives
 
 **Primary Goal**: Provide DSNY's operations department with predictive insights to allocate resources efficiently and budget for expected peaks in recycling activity.
 
@@ -35,7 +35,7 @@ This project forecasts recycling performance for NYC community districts using t
 
 ---
 
-## 3. Dataset
+## Dataset
 
 **Source**: [NYC Open Data - DSNY Monthly Tonnage](https://data.cityofnewyork.us/City-Government/DSNY-Monthly-Tonnage-Data/ebb7-mvp5/about_data)
 
@@ -59,28 +59,7 @@ This project forecasts recycling performance for NYC community districts using t
 
 ---
 
-## 4. Setup & Installation
-```bash
-# Clone and setup
-git clone https://github.com/Commit-Thomas/DSNY_Analysis.git
-cd DSNY_Analysis
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-
-# Download data
-# Place DSNY_Monthly_Tonnage_Data.csv in data/ folder
-
-# Run notebooks in order (01_eda → 02_baseline → 03_simple → 04_tuned)
-
-# Launch app
-cd app
-streamlit run streamlit_app.py
-```
-
----
-
-## 5. Key EDA Insights
+## Key EDA Insights
 
 * **Temporal Patterns**: Clear seasonal trends across all boroughs (2022-2025)
 * **District Variability**: Recycling proportions vary significantly; Manhattan District 8 leads with 1,884 tons recyclables
@@ -92,7 +71,7 @@ streamlit run streamlit_app.py
 
 ---
 
-## 6. Modeling Approach
+## Modeling Approach
 
 ### Three-Model Comparison Strategy
 
@@ -119,7 +98,7 @@ We use all three models simultaneously because RMSE varies significantly dependi
 
 ---
 
-## 7. Streamlit Application
+## Streamlit Application
 
 **Features**:
 * Enter district ID (format: `bronx1`, `manhattan8`, etc.)
@@ -141,7 +120,7 @@ streamlit run streamlit_app.py
 
 ---
 
-## 8. Results
+## Results
 
 **Example: Bronx District 1**
 
@@ -155,7 +134,7 @@ streamlit run streamlit_app.py
 
 ---
 
-## 9. Business Impact
+## Business Impact
 
 **Operational Benefits**:
 * Proactive resource allocation to underperforming districts
@@ -175,7 +154,7 @@ streamlit run streamlit_app.py
 
 ---
 
-## 10. Limitations & Future Work
+## Limitations & Future Work
 
 **Current Limitations**:
 * **Comparison Constraints**: Can only compare within groups—no per capita data to properly scale across districts of different sizes
@@ -203,7 +182,7 @@ streamlit run streamlit_app.py
 
 ---
 
-## 11. Project Structure
+## Project Structure
 ```
 DSNY_Analysis/
 ├── app/
