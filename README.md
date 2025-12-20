@@ -13,7 +13,7 @@ This project forecasts recycling performance for NYC community districts using t
 
 **Key Innovation**: Rather than forcing a single model across all districts, our system recognizes that recycling patterns vary significantly by location and automatically selects the most accurate approach for each community district.
 
-![Streamlit App Demo](projectdemo.mp4)
+<img width="730" height="687" alt="Screenshot 2025-12-20 at 3 33 05 PM" src="https://github.com/user-attachments/assets/524ec1e3-d19f-4607-8004-2412a2022745" />
 
 ---
 
