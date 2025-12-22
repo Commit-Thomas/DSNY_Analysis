@@ -1,206 +1,273 @@
 # ♻️ DSNY Recycling Performance Forecasting
-By Thomas Segal & Vincet Perez
+
 ---
+
 <p align="center">
   <img src="https://upload.wikimedia.org/wikipedia/en/thumb/5/59/New_York_City_Department_of_Sanitation_logo.svg/2560px-New_York_City_Department_of_Sanitation_logo.svg.png" alt="DSNY Logo" width="200">
 </p>
 
-## Project Overview
+## Project Purpose
 
-This project forecasts recycling performance for NYC community districts using time series analysis. An interactive Streamlit application automatically selects the best forecasting model (Baseline, ARIMA, or SARIMA) for each district based on RMSE, helping DSNY predict monthly recycling proportions one month in advance.
+This project forecasts monthly recycling performance for NYC community districts to help DSNY's operations department allocate resources and budget for recycling activity. DSNY collects 24 million pounds of recyclables, trash, and compost daily across 59 district garages. In 2024, Manhattan District 8 collected **1,576 more tons** of recyclables than Brooklyn District 16, demonstrating significant district-level variation.
 
-**Context**: DSNY collects 24 million pounds of recyclables, trash, and compost materials daily across 59 district garages in NYC's 5 boroughs. District-level analysis reveals significant variation—in 2024, Manhattan District 8 collected **1,576 more tons** of recyclables than Brooklyn District 16, highlighting the need for targeted forecasting.
+**Stakeholder**: NYC Department of Sanitation - Operations Department
 
-**Key Innovation**: Rather than forcing a single model across all districts, our system recognizes that recycling patterns vary significantly by location and automatically selects the most accurate approach for each community district.
+**Key Decision**: Where to allocate educational resources, outreach programs, and collection resources in the next 1-3 months based on predicted recycling performance at the district level.
 
-<img width="730" height="687" alt="Screenshot 2025-12-20 at 3 33 05 PM" src="https://github.com/user-attachments/assets/524ec1e3-d19f-4607-8004-2412a2022745" />
-
----
-
-## Business Objectives
-
-**Primary Goal**: Provide DSNY's operations department with predictive insights to allocate resources efficiently and budget for expected peaks in recycling activity.
-
-1. **Performance Forecasting**: Predict monthly recycling proportions at the district level
-2. **Model Comparison**: Automatically select optimal forecasting approach per district
-3. **Resource Optimization**: Enable proactive allocation based on predicted trends
-4. **District Analysis**: Identify high and low performers for targeted interventions
-
-**Core Problem**: DSNY needs to distinguish between districts that recycle as a function of total waste collection to allocate educational resources, identify potential infrastructure issues, and track progress toward sustainability goals.
-
-**Stakeholders**:
-* **DSNY Operations Department**: Primary user for resource allocation and budget planning
-* **Environmental NGOs**: Advocacy groups can compare district trends and promote recycling campaigns
-* **Community Organizations**: Local groups can use insights to drive education and habit formation
+<img width="730" height="687" alt="Screenshot 2025-12-20 at 3 33 05 PM" src="https://github.com/user-attachments/assets/524ec1e3-d19f-4607-8004-2412a2022745" />
 
 ---
 
-## Dataset
+## Dataset Information
 
 **Source**: [NYC Open Data - DSNY Monthly Tonnage](https://data.cityofnewyork.us/City-Government/DSNY-Monthly-Tonnage-Data/ebb7-mvp5/about_data)
 
 * **Coverage**: ~24,647 monthly observations (Jan 2022 - Oct 2025)
-* **Geographic Scope**: 59 community districts across 5 boroughs
+* **Grain**: Monthly by borough and community district (59 districts total)
 
-**Key Columns**:
+### Data Dictionary
 
-| Column | Description | Type |
-| --- | --- | --- |
-| MONTH | Reporting month | DateTime |
-| BOROUGH | NYC borough | Categorical |
-| COMMUNITYDISTRICT | District number (1-18) | Integer |
-| REFUSETONSCOLLECTED | Non-recyclable tons | Float |
-| PAPERTONSCOLLECTED | Paper recyclables (tons) | Float |
-| MGPTONSCOLLECTED | Metal/Glass/Plastic (tons) | Float |
-| proportionrefuse* | (Paper + MGP) / Total Waste | Float [0-1] |
-| id* | Borough + District (e.g., "bronx1") | String |
+| Column | Description | Type | Notes |
+| --- | --- | --- | --- |
+| MONTH | Reporting month | DateTime | Parsed to datetime |
+| BOROUGH | NYC borough | Categorical | 5 boroughs |
+| COMMUNITYDISTRICT | District number | Integer | 1-18 per borough |
+| REFUSETONSCOLLECTED | Non-recyclable tons | Float | Target component |
+| PAPERTONSCOLLECTED | Paper recyclables | Float | Target component |
+| MGPTONSCOLLECTED | Metal/Glass/Plastic | Float | Target component |
+| proportionrefuse* | (Paper + MGP) / Total | Float [0-1] | **Engineered target** |
+| id* | Borough + District | String | **Engineered** (e.g., "bronx1") |
 
 *Engineered features
 
+### Data Quality
+
+* **Temporal Filter**: January 2022 onwards (3 years)
+* **Missing Values**: Organic waste columns excluded (~70-90% missing); Paper/MGP ~10% missing, complete cases only used
+* **Grain**: Monthly district level; daily frequency interpolation for time series modeling
+
 ---
 
-## Key EDA Insights
+## How to Reproduce
+```bash
+# Setup
+git clone https://github.com/Commit-Thomas/DSNY_Analysis.git
+cd DSNY_Analysis
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
 
-* **Temporal Patterns**: Clear seasonal trends across all boroughs (2022-2025)
-* **District Variability**: Recycling proportions vary significantly; Manhattan District 8 leads with 1,884 tons recyclables
-* **Distribution**: Right-skewed waste tonnage with high inter-district variability
-* **Top Performers**: Manhattan and Queens districts consistently show higher recycling rates
-* **Target Variable**: Recycling proportion = (Paper + MGP) / (Paper + MGP + Refuse)
+# Download data from NYC Open Data link above
+# Save as data/DSNY_Monthly_Tonnage_Data.csv
 
-**Critical Finding**: The gap between highest and lowest performing districts in 2024 was ~30% (308 tons vs 1,884 tons in raw recyclables), demonstrating the need for district-level analysis rather than borough-wide aggregation.
+# Run notebooks: 01_eda → 02_baseline → 03_simple → 04_tuned
+
+# Launch app
+cd app
+streamlit run streamlit_app.py
+```
+
+---
+
+## Exploratory Data Analysis
+
+### Stakeholder Context
+
+**Stakeholder**: DSNY Operations Department  
+**Timeline**: 1-3 months  
+**Decision**: Resource allocation for campaigns, infrastructure, scheduling
+
+### Key Patterns
+
+1. **Temporal Seasonality**: Yearly patterns with summer peaks
+2. **District Heterogeneity**: Manhattan 8 (1,884 tons) vs Brooklyn 16 (308 tons) = 6x variation
+3. **Stability Differences**: Some districts consistent, others volatile month-to-month
+4. **Borough Trends**: Manhattan and Queens consistently outperform
+5. **Moderate Correlation**: Paper and MGP moderately correlated but provide distinct signals
+
+### Pre-Model Assumptions
+
+* Temporal independence with recent past influence
+* Stationarity achievable via first-order differencing
+* 12-month seasonality exists for some districts
+* District autonomy (no spatial correlation)
+
+---
+
+## Target Variable
+
+### Definition
+```python
+proportionrefuse = (PAPERTONSCOLLECTED + MGPTONSCOLLECTED) / 
+                   (PAPERTONSCOLLECTED + MGPTONSCOLLECTED + REFUSETONSCOLLECTED)
+```
+
+### Justification
+
+* **Stakeholder Alignment**: Directly measures DSNY's key performance indicator
+* **Normalized**: Accounts for district size; enables fair comparison
+* **Actionable**: Thresholds trigger resource allocation decisions
+* **Stable**: More forecastable than raw tonnage
 
 ---
 
 ## Modeling Approach
 
-### Three-Model Comparison Strategy
+### Train/Test Split
 
-We use all three models simultaneously because RMSE varies significantly depending on the unique borough/district combination. Rather than selecting one "best" model globally, we let each district's data determine its optimal forecasting approach.
+* **Type**: Chronological (time-based)
+* **Train**: First 70% (~2023)
+* **Test**: Last 30% (~2024)
+* **Rationale**: Preserves temporal order, prevents leakage
 
-**Baseline (Naive Forecast)**
-* **Method**: Most naive approach—assumes yesterday's recycling percentage remains the same
-* **Best for**: Highly stable time series with minimal variation
+### Three Models
 
-**ARIMA(1,1,1)**
-* **Method**: Slightly less naive—assumes yesterday's tonnage influences today's
-* **Advantage**: More robust because it accounts for errors in past predictions
-* **Best for**: Series with trends, no strong seasonality
+We fit all three models per district and select the lowest RMSE. District patterns vary significantly, so adaptive selection outperforms a single global approach.
 
-**SARIMA(1,1,1)(1,1,1,12)**
-* **Method**: Most complex—like ARIMA but accounts for seasonal changes (12-month cycle)
-* **Advantage**: Captures yearly patterns in recycling behavior
-* **Best for**: Series with yearly cycles
+#### Model 1: Baseline (Naive)
+
+* **Method**: Last observed value carried forward
+* **Fair Yardstick**: Minimum acceptable performance; difficult to beat for stable series
+* **Implementation**: `baseline_pred = train.iloc[-1]`
+
+#### Model 2: ARIMA(1,1,1)
+
+* **Method**: AR(1) + I(1) differencing + MA(1)
+* **Assumptions**: Stationarity after differencing, short-term autocorrelation, no seasonality
+* **Library**: `statsmodels.tsa.arima.model.ARIMA`
+
+#### Model 3: SARIMA(1,1,1)(1,1,1,12)
+
+* **Method**: ARIMA + 12-month seasonal component
+* **Assumptions**: Yearly periodicity, sufficient data for estimation, additive seasonality
+* **Library**: `statsmodels.tsa.statespace.sarimax.SARIMAX`
+
+---
+
+## Evaluation Metrics
+
+### Example: Bronx District 1
+
+| Model | RMSE | MAPE | Selected |
+| --- | --- | --- | --- |
+| Baseline | 0.008 | 7.2% | ✓ |
+| ARIMA(1,1,1) | 0.008 | 7.2% | ✓ |
+| SARIMA(1,1,1)(1,1,1,12) | 0.011 | 9.8% | |
+
+### Metrics
+
+**RMSE**: Penalizes large errors; same units as target  
+**MAPE**: Percentage error; interpretable for stakeholders
 
 ### Model Selection
-* **Metric**: Root Mean Squared Error (RMSE)
-* **Strategy**: Automatically select lowest RMSE per district
-* **Split**: 70% train (2023) / 30% test (2024)
+
+* **Tradeoffs**: Baseline/ARIMA tie for stable districts; SARIMA higher error with limited data
+* **Choice**: Adaptive per-district selection ensures optimal local performance
+
+### Diagnostics
+
+* ACF/PACF plots show no significant residual autocorrelation
+* Residuals approximately normal
+* Stationarity achieved via differencing
+* Model orders validated with AIC/BIC
 
 ---
 
-## Streamlit Application
+## Deployment
+
+### Serialized Models
+
+* `models/baseline.pkl`: Baseline predictions by district
+* `models/modeling_simple.pkl`: ARIMA models by district
+* `models/modeling_tuned.pkl`: SARIMA models by district
+
+### Streamlit App
 
 **Features**:
-* Enter district ID (format: `bronx1`, `manhattan8`, etc.)
-* Automatic RMSE calculation for all three models
-* Visual forecast with training data, actual values, and predictions
-* Highlights best-performing model
-* **District-level aggregation**: Provides detailed analysis for individual borough/district combinations
+1. Input district ID (e.g., `bronx1`)
+2. Auto-calculates RMSE for all models
+3. Highlights best model
+4. Visualizes forecast with time series plot
 
-**Usage**:
-```bash
-cd app
-streamlit run streamlit_app.py
-```
+**Stakeholder Output**:
+> "For [District], the [Model] predicts recycling proportion of [X.XX] next month, representing [change]. [Action recommendation]."
 
-**Tool Capabilities**:
-* **Predictive**: Forecasts future percentage of recycled waste using time series data
-* **Comparative**: Finds percent of recycled waste compared to total waste (tons)
-* **Granular**: Operates at district level for targeted resource allocation
+**Run**: `streamlit run app/streamlit_app.py`  
+**Demo**: See `projectdemo.mp4`
 
 ---
 
-## Results
+## Ethics & Limitations
 
-**Example: Bronx District 1**
+### Ethics
 
-| Model | RMSE | Selected |
-| --- | --- | --- |
-| Baseline | 0.008 | ✓ |
-| ARIMA(1,1,1) | 0.008 | ✓ |
-| SARIMA(1,1,1)(1,1,1,12) | 0.011 | |
+* **Privacy**: District aggregation protects individuals
+* **Advisory**: Predictions inform, not mandate decisions
+* **Equity**: Identifies districts needing support, not punishment
+* **Transparency**: Stakeholders see model selection rationale
 
-**Key Finding**: No single model dominates across all districts. Adaptive selection ensures optimal accuracy for each location's unique patterns.
+### Limitations
 
----
+**Data**:
+* No per capita normalization (district size comparison limited)
+* Limited features (only tonnage; no demographics/infrastructure)
+* Monthly granularity only (no sub-monthly events)
 
-## Business Impact
+**Model**:
+* Single-step forecast (1 month ahead only)
+* Requires domain knowledge (district codes)
+* Static models (no auto-retraining)
+* External factors (weather, policy) not modeled
 
-**Operational Benefits**:
-* Proactive resource allocation to underperforming districts
-* Budget planning through volume forecasts
-* Performance monitoring to measure program effectiveness
+**Practical**:
+* Performance gaps may need infrastructure/policy changes beyond model scope
+* K-means revealed no distinct behavioral groups for intervention targeting
 
-**Strategic Insights**:
-* High performers: Manhattan and Queens districts
-* Improvement opportunities: Several Bronx and Brooklyn districts
-* Stable districts: Baseline models indicate consistent community behavior
+### Future Work
 
-**Practical Applications**:
-* **Educational Campaigns**: Target districts predicted to underperform with recycling education
-* **Infrastructure Planning**: Identify if low performance correlates with collection logistics
-* **Policy Evaluation**: Track impact of new recycling initiatives by comparing forecasts to actuals
-* **Resource Reallocation**: Shift successful strategies from high-performing to low-performing districts
+**Short-Term**:
+* Per capita data integration
+* Raw tonnage output option
+* Confidence intervals
+* Multi-step forecasting (3-6 months)
 
----
-
-## Limitations & Future Work
-
-**Current Limitations**:
-* **Comparison Constraints**: Can only compare within groups—no per capita data to properly scale across districts of different sizes
-* **Limited Features**: Few variables in dataset restrict model complexity and explanatory power
-* **Readability**: Current percentage-based output could be converted to raw tons for better legibility
-* **Domain Knowledge Required**: Tool currently most usable by those familiar with DSNY operations
-* **Grouping Challenges**: K-means clustering did not reveal distinct district behavior patterns
-* **Monthly Granularity**: Single-step ahead forecasting (1 month only)
-* **External Factors**: Weather, policy changes, and events not explicitly modeled
-
-**Future Enhancements**:
-* **Per Capita Normalization**: Incorporate population data for fair cross-district comparison
-* **Feature Expansion**: Add demographic, infrastructure, and policy variables
-* **Output Options**: Toggle between percentage and raw tonnage displays
-* **Multi-step Forecasting**: Extend prediction horizon for longer-term planning
-* **User Interface**: Simplify for non-technical DSNY staff
-* **Advanced Modeling**: Auto-ARIMA, LSTM, Prophet for improved accuracy
-* **Confidence Intervals**: Provide uncertainty bounds for predictions
-* **Multicollinearity Analysis**: Address potential feature correlation issues
-
-**Known Challenges**:
-* Tracking district-level improvements over time requires careful consideration of external factors (e.g., policy changes, infrastructure upgrades)
-* Closing the performance gap between high and low recyclers may require interventions beyond prediction capabilities
-* Different districts may require fundamentally different strategies based on demographics, building types, and local culture
+**Long-Term**:
+* Auto-ARIMA for order selection
+* Exogenous variables (weather, holidays, policy dates)
+* User-friendly interface for non-technical staff
+* Advanced ML (LSTM, Prophet)
+* Spatial models with district adjacency
+* Automated retraining pipeline
 
 ---
 
 ## Project Structure
 ```
 DSNY_Analysis/
-├── app/
-│   └── streamlit_app.py          # Interactive forecasting tool
 ├── data/
 │   └── DSNY_Monthly_Tonnage_Data.csv
-├── models/
-│   ├── baseline.pkl              # Baseline predictions
-│   ├── modeling_simple.pkl       # ARIMA models
-│   └── modeling_tuned.pkl        # SARIMA models
 ├── notebooks/
 │   ├── 01_eda.ipynb
 │   ├── 02_modeling_baseline.ipynb
 │   ├── 03_modeling_simple.ipynb
 │   └── 04_modeling_tuned.ipynb
+├── app/
+│   └── streamlit_app.py
+├── models/
+│   ├── baseline.pkl
+│   ├── modeling_simple.pkl
+│   └── modeling_tuned.pkl
 ├── requirements.txt
+├── projectdemo.mp4
 └── README.md
 ```
+
+---
+
+## Contributors
+
+* [Thomas](https://github.com/Commit-Thomas): Modeling, Deployment
+* [Vincent Perez](https://github.com/vrpperez7): EDA, Visualization
 
 ---
 
