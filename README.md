@@ -261,14 +261,3 @@ DSNY_Analysis/
 ├── projectdemo.mp4
 └── README.md
 ```
-
----
-
-## Contributors
-
-* [Thomas](https://github.com/Commit-Thomas): Modeling, Deployment
-* [Vincent Perez](https://github.com/vrpperez7): EDA, Visualization
-
----
-
-**Last Updated**: December 2025
