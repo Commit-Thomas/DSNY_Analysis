@@ -25,7 +25,7 @@ This project forecasts monthly recycling performance for NYC community districts
 
 **Source**: [NYC Open Data - DSNY Monthly Tonnage](https://data.cityofnewyork.us/City-Government/DSNY-Monthly-Tonnage-Data/ebb7-mvp5/about_data)
 
-* **Coverage**: ~1,416 monthly observations (Jan 2023 - Jan 2025)
+* **Coverage**: 1,416 monthly observations (Jan 2023 - Jan 2025)
 * **Grain**: Monthly by borough and community district (59 districts total)
 
 ### Data Dictionary
