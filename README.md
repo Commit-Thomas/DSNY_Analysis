@@ -3,8 +3,7 @@
 ---
 
 <p align="center">
-  <img
-    src="https://upload.wikimedia.org/wikipedia/en/thumb/5/59/New_York_City_Department_of_Sanitation_logo.svg/2560px-New_York_City_Department_of_Sanitation_logo.svg.png"
+  <img         src="https://www.wastetodaymagazine.com/remote/aHR0cHM6Ly9naWVjZG4uYmxvYi5jb3JlLndpbmRvd3MubmV0L2ZpbGV1cGxvYWRzL2ltYWdlLzIwMjQvMTIvMTAvYWRvYmVzdG9ja181Nzc2Mjg2MTJfZWRpdG9yaWFsX3VzZV9vbmx5X2RzbnlfbG9nby5naWY.Lapt4I6wKNE.gif?format=webp"
     width="200"
     alt="DSNY Logo"
   />
