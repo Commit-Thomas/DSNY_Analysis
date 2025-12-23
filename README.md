@@ -15,7 +15,7 @@ This project forecasts monthly recycling performance for NYC community districts
 
 **Stakeholder**: NYC Department of Sanitation - Operations Department
 
-**Key Decision**: Where to allocate educational resources, outreach programs, and collection resources in the next 1-3 months based on predicted recycling performance at the district level.
+**Key Decision**: Where to allocate educational resources, outreach programs, and collection resources in the next 8 months based on predicted recycling performance at the district level.
 
 <img width="730" height="687" alt="Screenshot 2025-12-20 at 3 33 05 PM" src="https://github.com/user-attachments/assets/524ec1e3-d19f-4607-8004-2412a2022745" />
 
@@ -34,7 +34,7 @@ This project forecasts monthly recycling performance for NYC community districts
 | --- | --- | --- | --- |
 | MONTH | Reporting month | DateTime | Parsed to datetime |
 | BOROUGH | NYC borough | Categorical | 5 boroughs |
-| COMMUNITYDISTRICT | District number | Integer | 1-18 per borough |
+| COMMUNITYDISTRICT | District number | Integer | 3-18 per borough |
 | REFUSETONSCOLLECTED | Non-recyclable tons | Float | Target component |
 | PAPERTONSCOLLECTED | Paper recyclables | Float | Target component |
 | MGPTONSCOLLECTED | Metal/Glass/Plastic | Float | Target component |
@@ -72,7 +72,7 @@ streamlit run streamlit_app.py
 ### Stakeholder Context
 
 **Stakeholder**: DSNY Operations Department  
-**Timeline**: 7 months from last date 
+**Timeline**: 8 months from last date 
 **Decision**: Resource allocation for campaigns, infrastructure, scheduling
 
 ### Key Patterns
