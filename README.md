@@ -3,7 +3,11 @@
 ---
 
 <p align="center">
-  <img src="https://upload.wikimedia.org/wikipedia/en/thumb/5/59/New_York_City_Department_of_Sanitation_logo.svg/2560px-New_York_City_Department_of_Sanitation_logo.svg.png" width="200"/>
+  <img
+    src="https://upload.wikimedia.org/wikipedia/en/thumb/5/59/New_York_City_Department_of_Sanitation_logo.svg/512px-New_York_City_Department_of_Sanitation_logo.svg.png"
+    width="200"
+    alt="DSNY Logo"
+  />
 </p>
 
 ## Project Purpose
