@@ -4,7 +4,7 @@
 
 <p align="center">
   <img         src="https://www.wastetodaymagazine.com/remote/aHR0cHM6Ly9naWVjZG4uYmxvYi5jb3JlLndpbmRvd3MubmV0L2ZpbGV1cGxvYWRzL2ltYWdlLzIwMjQvMTIvMTAvYWRvYmVzdG9ja181Nzc2Mjg2MTJfZWRpdG9yaWFsX3VzZV9vbmx5X2RzbnlfbG9nby5naWY.Lapt4I6wKNE.gif?format=webp"
-    width="200"
+    width="400"
     alt="DSNY Logo"
   />
 </p>
@@ -25,7 +25,7 @@ This project forecasts monthly recycling performance for NYC community districts
 
 **Source**: [NYC Open Data - DSNY Monthly Tonnage](https://data.cityofnewyork.us/City-Government/DSNY-Monthly-Tonnage-Data/ebb7-mvp5/about_data)
 
-* **Coverage**: ~24,647 monthly observations (Jan 2022 - Oct 2025)
+* **Coverage**: ~24,647 monthly observations (Jan 2023 - Jan 2025)
 * **Grain**: Monthly by borough and community district (59 districts total)
 
 ### Data Dictionary
@@ -45,7 +45,7 @@ This project forecasts monthly recycling performance for NYC community districts
 
 ### Data Quality
 
-* **Temporal Filter**: January 2022 onwards (3 years)
+* **Temporal Filter**: January 2023 to January 2025 (2 years)
 * **Missing Values**: Organic waste columns excluded (~70-90% missing); Paper/MGP ~10% missing, complete cases only used
 * **Grain**: Monthly district level; daily frequency interpolation for time series modeling
 
@@ -60,11 +60,6 @@ python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-# Download data from NYC Open Data link above
-# Save as data/DSNY_Monthly_Tonnage_Data.csv
-
-# Run notebooks: 01_eda → 02_baseline → 03_simple → 04_tuned
-
 # Launch app
 cd app
 streamlit run streamlit_app.py
@@ -77,22 +72,21 @@ streamlit run streamlit_app.py
 ### Stakeholder Context
 
 **Stakeholder**: DSNY Operations Department  
-**Timeline**: 1-3 months  
+**Timeline**: 7 months from last date 
 **Decision**: Resource allocation for campaigns, infrastructure, scheduling
 
 ### Key Patterns
 
 1. **Temporal Seasonality**: Yearly patterns with summer peaks
 2. **District Heterogeneity**: Manhattan 8 (1,884 tons) vs Brooklyn 16 (308 tons) = 6x variation
-3. **Stability Differences**: Some districts consistent, others volatile month-to-month
-4. **Borough Trends**: Manhattan and Queens consistently outperform
-5. **Moderate Correlation**: Paper and MGP moderately correlated but provide distinct signals
+3. **Stability Differences**: Districts are volatile month-to-month
+4. **Moderate Correlation**: Paper and MGP moderately correlated but provide distinct signals
 
 ### Pre-Model Assumptions
 
 * Temporal independence with recent past influence
 * Stationarity achievable via first-order differencing
-* 12-month seasonality exists for some districts
+* 12-month seasonality exists for districts
 * District autonomy (no spatial correlation)
 
 ---
@@ -119,8 +113,8 @@ proportionrefuse = (PAPERTONSCOLLECTED + MGPTONSCOLLECTED) /
 ### Train/Test Split
 
 * **Type**: Chronological (time-based)
-* **Train**: First 70% (~2023)
-* **Test**: Last 30% (~2024)
+* **Train**: First 70%
+* **Test**: Last 30%
 * **Rationale**: Preserves temporal order, prevents leakage
 
 ### Three Models
@@ -151,16 +145,15 @@ We fit all three models per district and select the lowest RMSE. District patter
 
 ### Example: Bronx District 1
 
-| Model | RMSE | MAPE | Selected |
-| --- | --- | --- | --- |
-| Baseline | 0.008 | 7.2% | ✓ |
-| ARIMA(1,1,1) | 0.008 | 7.2% | ✓ |
-| SARIMA(1,1,1)(1,1,1,12) | 0.011 | 9.8% | |
+| Model | RMSE | Selected |
+| --- | --- | --- |
+| Baseline | 0.008 | ✓ |
+| ARIMA(1,1,1) | 0.008 | ✓ |
+| SARIMA(1,1,1)(1,1,1,12) | 9.8% | |
 
 ### Metrics
 
 **RMSE**: Penalizes large errors; same units as target  
-**MAPE**: Percentage error; interpretable for stakeholders
 
 ### Model Selection
 
@@ -172,7 +165,6 @@ We fit all three models per district and select the lowest RMSE. District patter
 * ACF/PACF plots show no significant residual autocorrelation
 * Residuals approximately normal
 * Stationarity achieved via differencing
-* Model orders validated with AIC/BIC
 
 ---
 
@@ -193,7 +185,7 @@ We fit all three models per district and select the lowest RMSE. District patter
 4. Visualizes forecast with time series plot
 
 **Stakeholder Output**:
-> "For [District], the [Model] predicts recycling proportion of [X.XX] next month, representing [change]. [Action recommendation]."
+> "For [District], the [Model] predicts recycling percentage of [X.XX] next month, representing [change]. [Action recommendation]."
 
 **Run**: `streamlit run app/streamlit_app.py`  
 **Demo**: See `projectdemo.mp4`
@@ -217,7 +209,6 @@ We fit all three models per district and select the lowest RMSE. District patter
 * Monthly granularity only (no sub-monthly events)
 
 **Model**:
-* Single-step forecast (1 month ahead only)
 * Requires domain knowledge (district codes)
 * Static models (no auto-retraining)
 * External factors (weather, policy) not modeled
