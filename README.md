@@ -4,7 +4,7 @@
 
 <p align="center">
   <img
-    src="https://upload.wikimedia.org/wikipedia/en/thumb/5/59/New_York_City_Department_of_Sanitation_logo.svg/512px-New_York_City_Department_of_Sanitation_logo.svg.png"
+    src="https://www.nyc.gov/assets/dcas/images/employment/nyc-dsny-logo.jpg"
     width="200"
     alt="DSNY Logo"
   />
