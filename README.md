@@ -125,7 +125,7 @@ We fit all three models per district and select the lowest RMSE. District patter
 
 * **Method**: Last observed value carried forward
 * **Fair Yardstick**: Minimum acceptable performance; difficult to beat for stable series
-* **Implementation**: `baseline_pred = train.iloc[-1]`
+* **Implementation**: `predict = s.shift(1)[test.index]`
 
 #### Model 2: ARIMA(1,1,1)
 
