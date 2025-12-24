@@ -46,8 +46,8 @@ This project forecasts monthly recycling performance for NYC community districts
 ### Data Quality
 
 * **Temporal Filter**: January 2023 to January 2025 (2 years)
-* **Missing Values**: Organic waste columns excluded (~70-90% missing); Paper/MGP ~10% missing, complete cases only used
-* **Grain**: Monthly district level; daily frequency interpolation for time series modeling
+* **Missing Values**: Organic waste columns excluded (~70-90% missing)
+* **Grain**: Monthly district level
 
 ---
 
