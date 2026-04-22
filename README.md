@@ -234,7 +234,84 @@ We fit all three models per district and select the lowest RMSE. District patter
 * Automated retraining pipeline
 
 ---
+## 🔧 Future Work & Project Expansions
 
+This project was built as a forecasting system for NYC district-level recycling performance supporting the :contentReference[oaicite:0]{index=0} Operations team. The following expansions improve interpretability, reliability, and stakeholder usability.
+
+---
+
+### Planned Improvements
+
+#### 1. Forecast vs Actual + Baseline Comparison
+
+**What’s being added:**
+- Time series plots showing:
+  - Training data
+  - Test (actual values)
+  - Model predictions (ARIMA/SARIMA)
+  - Baseline (naive) model
+
+**Type:**
+- Visualization / Model evaluation
+
+**New artifacts:**
+- Updated modeling notebook (`04_modeling_tuned.ipynb`)
+- Evaluation plots in app/analysis
+- README section on model diagnostics
+
+**Why it matters:**
+Enables direct visual validation of model performance and shows whether complex models outperform a simple baseline.
+
+---
+
+#### 2. Confidence Intervals for Forecasts
+
+**What’s being added:**
+- 95% confidence intervals using SARIMA `get_forecast().conf_int()`
+- Visual uncertainty bands around predictions
+
+**Type:**
+- Analysis / Uncertainty quantification
+
+**New artifacts:**
+- Updated forecast plots with uncertainty shading
+- README explanation of forecast reliability
+
+**Why it matters:**
+Moves from point estimates to probabilistic forecasting, allowing stakeholders to understand risk and uncertainty in predictions.
+
+---
+
+### Tradeoffs
+
+- **No external features (weather, demographics, policy data):**
+  Too complex for current scope and data limitations.
+
+- **No advanced ML models (Prophet, LSTM):**
+  SARIMA + baseline provided strong, interpretable performance.
+
+- **No auto-retraining pipeline:**
+  Deferred due to deployment scope.
+
+---
+
+### Stakeholder Impact
+
+These improvements allow DSNY to:
+- Visually validate forecasts against real outcomes
+- Understand uncertainty instead of relying on point predictions
+- Identify high-risk districts requiring closer monitoring
+- Distinguish real trends from noise
+
+---
+
+### Skill Growth
+
+- Time series evaluation beyond RMSE (visual + baseline comparison)
+- Communicating uncertainty in forecasts
+- Balancing model complexity vs interpretability
+- Translating technical outputs into decisions
+---
 ## Project Structure
 ```
 DSNY_Analysis/
